@@ -1,5 +1,6 @@
+import { atom, useAtom } from "jotai";
 import { CircleIcon } from "lucide-react";
-import { memo, useState } from "react";
+import { memo, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +12,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { pinDefsAtom } from "@/lib/stores";
 import { cn } from "@/lib/utils";
 import type { PinDetail } from "@/types/chip";
 import {
@@ -20,6 +22,13 @@ import {
   usePinWritingMode,
 } from "./pinUtils";
 
+const sideTrans: Record<PinDirection, PinDirection> = {
+  left: "right",
+  right: "left",
+  top: "bottom",
+  bottom: "top",
+};
+
 export const PinDisplay = memo(function PinDisplay({
   pinDetail,
   direction = "left",
@@ -27,7 +36,16 @@ export const PinDisplay = memo(function PinDisplay({
   pinDetail: PinDetail;
   direction: PinDirection;
 }) {
-  const [pinDef, setPinDef] = useState("Reset");
+  const pinDefAtom = useMemo(
+    () =>
+      atom(
+        (get) => get(pinDefsAtom)[pinDetail.id] ?? "Reset",
+        (get, set, newVal: string) =>
+          set(pinDefsAtom, { ...get(pinDefsAtom), [pinDetail.id]: newVal }),
+      ),
+    [pinDetail],
+  );
+  const [pinDef, setPinDef] = useAtom(pinDefAtom);
   const pinDefColor = pinColor(pinDef);
   const writingMode = usePinWritingMode(direction);
 
@@ -40,7 +58,11 @@ export const PinDisplay = memo(function PinDisplay({
     >
       {pinDef !== "Reset" && (
         <Badge
-          className={cn("text-sm bg-card py-1 rounded-md", pinDefColor)}
+          className={cn(
+            "text-sm bg-card py-1 rounded-md animate-in fade-in duration-500",
+            pinDirectionStyleDefs[direction].badge,
+            pinDefColor,
+          )}
           style={{ writingMode }}
           variant="outline"
         >
@@ -68,7 +90,7 @@ export const PinDisplay = memo(function PinDisplay({
             </div>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side={direction} align="start" className="">
+        <DropdownMenuContent side={sideTrans[direction]} align="start">
           <DropdownMenuGroup>
             <DropdownMenuLabel>{pinDetail.name}</DropdownMenuLabel>
             <DropdownMenuRadioGroup value={pinDef} onValueChange={setPinDef}>

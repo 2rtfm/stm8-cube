@@ -30,21 +30,25 @@ export const pinDirectionStyleDefs = {
     mainDiv: "flex-row",
     button: "w-26 h-8",
     pinAlign: "flex-col items-end",
+    badge: "slide-in-from-left-5",
   },
   right: {
     mainDiv: "flex-row-reverse",
     button: "w-26 h-8 flex-row-reverse",
     pinAlign: "flex-col-reverse items-start",
+    badge: "slide-in-from-right-5",
   },
   top: {
     mainDiv: "flex-col w-8",
     button: "h-26 w-8 flex-row-reverse",
     pinAlign: "flex-row-reverse items-end",
+    badge: "slide-in-from-top-5",
   },
   bottom: {
     mainDiv: "flex-col-reverse w-8",
     button: "h-26 w-8 flex-row-reverse",
     pinAlign: "flex-row items-start",
+    badge: "slide-in-from-bottom-5",
   },
 };
 

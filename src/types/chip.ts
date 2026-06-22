@@ -14,3 +14,5 @@ export interface ChipDetail {
   eeprom: number;
   pins: PinDetail[];
 }
+
+export type PinDefs = Record<number, string>;
