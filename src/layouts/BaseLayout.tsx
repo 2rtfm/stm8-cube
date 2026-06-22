@@ -9,7 +9,7 @@ export default function BaseLayout({
 }) {
   const [isDark, toggleDark] = useDarkMode();
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-svh">
       <div className="px-4 p-2 h-12 flex justify-between border-b items-center shrink-0">
         <div className="text-xl">Cube</div>
         <Button variant="outline" onClick={toggleDark} size="icon-sm">
