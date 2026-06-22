@@ -29,13 +29,13 @@ const sideTrans: Record<PinDirection, PinDirection> = {
   bottom: "top",
 };
 
-export const PinDisplay = memo(function PinDisplay({
+const PinDisplayRaw = ({
   pinDetail,
   direction = "left",
 }: {
   pinDetail: PinDetail;
   direction: PinDirection;
-}) {
+}) => {
   const pinDefAtom = useMemo(
     () =>
       atom(
@@ -109,4 +109,6 @@ export const PinDisplay = memo(function PinDisplay({
       </DropdownMenu>
     </div>
   );
-});
+};
+
+export const PinDisplay = memo(PinDisplayRaw);

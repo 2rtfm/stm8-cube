@@ -4,7 +4,7 @@ import type { PinDetail } from "@/types/chip";
 import { PinDisplay } from "./PinDisplay";
 import { type PinDirection, pinDirectionStyleDefs } from "./pinUtils";
 
-export const Pins = memo(function Pins({
+const PinsRaw = ({
   pinDetails,
   direction = "left",
   className,
@@ -12,7 +12,7 @@ export const Pins = memo(function Pins({
   pinDetails: PinDetail[];
   direction: PinDirection;
   className?: string;
-}) {
+}) => {
   return (
     <div
       className={cn(
@@ -26,4 +26,6 @@ export const Pins = memo(function Pins({
       ))}
     </div>
   );
-});
+};
+
+export const Pins = memo(PinsRaw);

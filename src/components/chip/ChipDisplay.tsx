@@ -4,11 +4,7 @@ import { cn } from "@/lib/utils";
 import type { ChipDetail } from "@/types/chip";
 import { Pins } from "./Pins";
 
-export const ChipDisplay = memo(function ChipDisplay({
-  chip,
-}: {
-  chip: ChipDetail;
-}) {
+const ChipDisplayRaw = ({ chip }: { chip: ChipDetail }) => {
   const isDual =
     chip.packaging.includes("SOP") || chip.packaging.includes("DIP");
   const pinCount = chip.pins.length;
@@ -71,4 +67,6 @@ export const ChipDisplay = memo(function ChipDisplay({
       </TransformComponent>
     </TransformWrapper>
   );
-});
+};
+
+export const ChipDisplay = memo(ChipDisplayRaw);
