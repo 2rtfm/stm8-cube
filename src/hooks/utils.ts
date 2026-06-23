@@ -1,29 +1,20 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export function useDarkMode(): [boolean, () => void] {
   const [isDark, setIsDark] = useState(() => {
-    const stored = localStorage.getItem("cube:darkMode");
-    const shouldBeDark = stored === "true";
-    if (shouldBeDark) {
-      document.body.classList.add("dark");
-    } else {
-      document.body.classList.remove("dark");
-    }
+    const shouldBeDark = localStorage.getItem("cube:darkMode") === "true";
+    document.body.classList.toggle("dark", shouldBeDark);
     return shouldBeDark;
   });
 
-  const toggleDark = () => {
-    setIsDark((state) => {
-      const newState = !state;
-      localStorage.setItem("cube:darkMode", String(newState));
-      if (newState) {
-        document.body.classList.add("dark");
-      } else {
-        document.body.classList.remove("dark");
-      }
-      return newState;
+  const toggleDark = useCallback(() => {
+    setIsDark((prev) => {
+      const next = !prev;
+      localStorage.setItem("cube:darkMode", String(next));
+      document.body.classList.toggle("dark", next);
+      return next;
     });
-  };
+  }, []);
 
   return [isDark, toggleDark];
 }
