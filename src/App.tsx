@@ -6,6 +6,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import BaseLayout from "@/layouts/BaseLayout";
+import { PinChangeConfirmDialog } from "./components/chip/PinChangeConfirmDialog";
 
 export function App() {
   return (
@@ -32,6 +33,7 @@ export function App() {
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
+      <PinChangeConfirmDialog />
     </BaseLayout>
   );
 }

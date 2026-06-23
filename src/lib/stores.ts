@@ -29,6 +29,35 @@ export const afrStatusAtom = atomWithStorage<AfrStatus>(
   },
 );
 
+interface PendingWritePinDef {
+  name: string;
+  newDef: string;
+  affectedPins: string[];
+  effectArray: [string, boolean][];
+}
+
+export const pendingWritePinDefAtom = atom<PendingWritePinDef | null>(null);
+
+export const executeWritePinDefAtom = atom(null, (get, set) => {
+  const pending = get(pendingWritePinDefAtom);
+  if (!pending) return;
+  const { name, newDef, affectedPins, effectArray } = pending;
+  set(pinDefsAtom, {
+    ...get(pinDefsAtom),
+    ...Object.fromEntries(affectedPins.map((item) => [item, "Reset"])),
+    [name]: newDef,
+  });
+  set(afrStatusAtom, {
+    ...get(afrStatusAtom),
+    ...Object.fromEntries(effectArray),
+  });
+  set(pendingWritePinDefAtom, null);
+});
+
+export const cancelWritePinDefAtom = atom(null, (_, set) => {
+  set(pendingWritePinDefAtom, null);
+});
+
 export const writePinDefAtom = atom(
   null,
   (get, set, { name, newDef }: { name: string; newDef: string }) => {
@@ -60,20 +89,13 @@ export const writePinDefAtom = atom(
       }
     }
     if (affectedPins.length > 0) {
-      const sure = confirm(
-        `Pin: ${affectedPins.join(" ")} state will be change due to this operation, continue?`,
-      );
-      if (sure) {
-        for (const pin of affectedPins) {
-          set(pinDefsAtom, { ...get(pinDefsAtom), [pin]: "Reset" });
-        }
-      } else {
-        return;
-      }
+      set(pendingWritePinDefAtom, { name, newDef, affectedPins, effectArray });
+      return;
     }
-    for (const [afr, value] of effectArray) {
-      set(afrStatusAtom, { ...get(afrStatusAtom), [afr]: value });
-    }
+    set(afrStatusAtom, {
+      ...get(afrStatusAtom),
+      ...Object.fromEntries(effectArray),
+    });
     set(pinDefsAtom, { ...get(pinDefsAtom), [name]: newDef });
   },
 );
