@@ -45,3 +45,5 @@ export interface ChipDetail {
 }
 
 export type PinDefs = Record<string, string>;
+
+export type AfrStatus = Partial<Record<AFR, boolean>>;

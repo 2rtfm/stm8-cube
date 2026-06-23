@@ -1,6 +1,6 @@
-import { atom, useAtom } from "jotai";
+import { atom, useAtom, useAtomValue } from "jotai";
 import { CircleIcon } from "lucide-react";
-import { memo, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { pinDefsAtom } from "@/lib/stores";
+import { afrStatusAtom, chipDetailAtom, pinDefsAtom } from "@/lib/stores";
 import { cn } from "@/lib/utils";
 import type { PinDetail } from "@/types/chip";
 import {
@@ -40,8 +40,50 @@ const PinDisplayRaw = ({
     () =>
       atom(
         (get) => get(pinDefsAtom)[pinDetail.name] ?? "Reset",
-        (get, set, newVal: string) =>
-          set(pinDefsAtom, { ...get(pinDefsAtom), [pinDetail.name]: newVal }),
+        (get, set, newVal: string) => {
+          const chip = get(chipDetailAtom);
+
+          const effectArray = chip.pins.find((p) => p.name === pinDetail.name)
+            ?.sideEffect?.[newVal];
+          if (!effectArray) {
+            set(pinDefsAtom, { ...get(pinDefsAtom), [pinDetail.name]: newVal });
+            return;
+          }
+          const affectedPins: string[] = [];
+          for (const [afr, value] of effectArray) {
+            if (get(afrStatusAtom)[afr] === value) {
+              continue;
+            }
+            const afrEffect = chip.afrEffect[afr]?.[!value ? "true" : "false"];
+            if (!afrEffect) {
+              continue;
+            }
+            for (const [pinName, defs] of afrEffect) {
+              const pinCheck = get(pinDefsAtom)[pinName];
+              for (const def of defs) {
+                if (pinCheck === def && pinName !== pinDetail.name) {
+                  affectedPins.push(pinName);
+                }
+              }
+            }
+          }
+          if (affectedPins.length > 0) {
+            const sure = confirm(
+              `Pin: ${affectedPins.join(" ")} state will be change due to this operation, continue?`,
+            );
+            if (sure) {
+              for (const pin of affectedPins) {
+                set(pinDefsAtom, { ...get(pinDefsAtom), [pin]: "Reset" });
+              }
+            } else {
+              return;
+            }
+          }
+          for (const [afr, value] of effectArray) {
+            set(afrStatusAtom, { ...get(afrStatusAtom), [afr]: value });
+          }
+          set(pinDefsAtom, { ...get(pinDefsAtom), [pinDetail.name]: newVal });
+        },
       ),
     [pinDetail],
   );
