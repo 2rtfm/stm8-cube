@@ -39,9 +39,9 @@ const PinDisplayRaw = ({
   const pinDefAtom = useMemo(
     () =>
       atom(
-        (get) => get(pinDefsAtom)[pinDetail.id] ?? "Reset",
+        (get) => get(pinDefsAtom)[pinDetail.name] ?? "Reset",
         (get, set, newVal: string) =>
-          set(pinDefsAtom, { ...get(pinDefsAtom), [pinDetail.id]: newVal }),
+          set(pinDefsAtom, { ...get(pinDefsAtom), [pinDetail.name]: newVal }),
       ),
     [pinDetail],
   );

@@ -1,4 +1,4 @@
-import { atom, useAtom } from "jotai";
+import { atom, useAtom, useAtomValue } from "jotai";
 import { Expand, ZoomIn, ZoomOut } from "lucide-react";
 import { memo } from "react";
 import {
@@ -6,11 +6,11 @@ import {
   TransformWrapper,
   useTransformEffect,
 } from "react-zoom-pan-pinch";
+import { Pins } from "@/components/chip/Pins";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
+import { chipDetailAtom } from "@/lib/stores";
 import { cn } from "@/lib/utils";
-import type { ChipDetail } from "@/types/chip";
-import { Pins } from "./Pins";
 
 const scaleAtom = atom(1);
 
@@ -24,7 +24,8 @@ const ScaleDisplayRaw = () => {
 
 const ScaleDisplay = memo(ScaleDisplayRaw);
 
-const ChipDisplayRaw = ({ chip }: { chip: ChipDetail }) => {
+const ChipDisplayRaw = () => {
+  const chip = useAtomValue(chipDetailAtom);
   const isDual =
     chip.packaging.includes("SOP") || chip.packaging.includes("DIP");
   const pinCount = chip.pins.length;

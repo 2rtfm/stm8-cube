@@ -5,7 +5,6 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { STM8S103F3P6_UFQFPN20 } from "@/data/chips/stm8s103f3p6";
 import BaseLayout from "@/layouts/BaseLayout";
 
 export function App() {
@@ -29,7 +28,7 @@ export function App() {
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize="60%">
-            <ChipDisplay chip={STM8S103F3P6_UFQFPN20} />
+            <ChipDisplay />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
